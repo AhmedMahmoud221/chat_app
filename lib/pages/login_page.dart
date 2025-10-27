@@ -1,4 +1,5 @@
 import 'package:chat_app/constant.dart';
+import 'package:chat_app/helper/show_snack_bar.dart';
 import 'package:chat_app/pages/register_page.dart';
 import 'package:chat_app/widgets/custom_button.dart';
 import 'package:chat_app/widgets/custom_text_field.dart';
@@ -54,13 +55,13 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 15),
 
-                CustomTextField(
+                CustomFormTextField(
                   onChanged: (data) => email = data,
                   hintText: 'Email',
                 ),
                 const SizedBox(height: 10),
 
-                CustomTextField(
+                CustomFormTextField(
                   onChanged: (data) => password = data,
                   hintText: 'Password',
                 ),
@@ -119,11 +120,6 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
-  }
-
-  void showSnackBar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<UserCredential> loginUser() async {
