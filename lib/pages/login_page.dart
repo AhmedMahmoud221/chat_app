@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'chat_page.dart';
+
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -19,9 +21,10 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool isLoading = false;
-  String? email, password;
-  final GlobalKey<FormState> formKey = GlobalKey();
 
+  final GlobalKey<FormState> formKey = GlobalKey();
+  
+  String? email, password;
   @override
   Widget build(BuildContext context) {
     return ModalProgressHUD(
@@ -75,9 +78,9 @@ class _LoginPageState extends State<LoginPage> {
                         isLoading = true;
                       });
                       try {
-                        UserCredential user = await loginUser();
-
-                        Navigator.pushNamed(context, ChatPage.id);
+                        await loginUser();
+                        Navigator.pushNamed(context, ChatPage.id,
+                            arguments: email);
 
                       } on FirebaseAuthException catch (ex) {
                         if (ex.code == 'user-not-found') {
@@ -86,12 +89,13 @@ class _LoginPageState extends State<LoginPage> {
                           showSnackBar(context, 'Wrong password');
                         }
                       } catch (ex) {
+                        print(ex);
                         showSnackBar(context, 'There was an error');
                       }
                       setState(() {
                         isLoading = false;
                       });
-                    }
+                    } else {}
                   },
                   text: 'Log In',
                 ),
