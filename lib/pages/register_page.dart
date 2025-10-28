@@ -1,5 +1,6 @@
 import 'package:chat_app/constant.dart';
 import 'package:chat_app/helper/show_snack_bar.dart';
+import 'package:chat_app/pages/chat_page.dart';
 import 'package:chat_app/widgets/custom_button.dart';
 import 'package:chat_app/widgets/custom_text_field.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,7 +10,7 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class RegisterPage extends StatefulWidget {
   RegisterPage({super.key});
-  String id = 'RegisterPage';
+  static String id = 'RegisterPage';
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -98,7 +99,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       UserCredential user = await registerUser();
                     
                     if (user.additionalUserInfo != null && user.additionalUserInfo!.isNewUser) {   // ✅ لو الحساب جديد فعلاً (أول مرة يسجل)
-                      showSnackBar(context, 'user registered successfully');
+                      Navigator.pushNamed(context, ChatPage.id);
                     }
                     } on FirebaseAuthException catch (ex) {
                       if (ex.code == 'weak-password') {

@@ -1,5 +1,6 @@
 import 'package:chat_app/constant.dart';
 import 'package:chat_app/helper/show_snack_bar.dart';
+import 'package:chat_app/pages/chat_page.dart';
 import 'package:chat_app/pages/register_page.dart';
 import 'package:chat_app/widgets/custom_button.dart';
 import 'package:chat_app/widgets/custom_text_field.dart';
@@ -8,7 +9,7 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({super.key});
+  const LoginPage({super.key});
 
   static String id = 'LoginPage';
 
@@ -76,7 +77,7 @@ class _LoginPageState extends State<LoginPage> {
                       try {
                         UserCredential user = await loginUser();
 
-                        showSnackBar(context, 'Welcome back 👋');
+                        Navigator.pushNamed(context, ChatPage.id);
 
                       } on FirebaseAuthException catch (ex) {
                         if (ex.code == 'user-not-found') {
@@ -105,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(context, RegisterPage().id);
+                        Navigator.pushNamed(context, RegisterPage.id);
                       },
                       child: const Text(
                         '   Register',
