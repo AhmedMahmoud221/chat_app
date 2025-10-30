@@ -7,6 +7,8 @@ import 'package:chat_app/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 import 'chat_page.dart';
 
@@ -66,6 +68,7 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 10),
 
                 CustomFormTextField(
+                  obscureText : true,
                   onChanged: (data) => password = data,
                   hintText: 'Password',
                 ),
@@ -78,9 +81,15 @@ class _LoginPageState extends State<LoginPage> {
                         isLoading = true;
                       });
                       try {
-                        await loginUser();
-                        Navigator.pushNamed(context, ChatPage.id,
-                            arguments: email);
+                        UserCredential userCredential = await loginUser();
+                        String? token = await userCredential.user?.getIdToken();
+
+                         final prefs = await SharedPreferences.getInstance();
+                          await prefs.setString('token', token ?? '');
+                          await prefs.setString('email', email!);
+
+                        Navigator.pushReplacementNamed(context, ChatPage.id,
+                          arguments: email);
 
                       } on FirebaseAuthException catch (ex) {
                         if (ex.code == 'user-not-found') {
