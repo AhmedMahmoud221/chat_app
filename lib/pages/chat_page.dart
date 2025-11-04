@@ -14,6 +14,8 @@ class ChatPage extends StatelessWidget {
 
   CollectionReference messages = FirebaseFirestore.instance.collection(kMessagesCollection);
   TextEditingController controller = TextEditingController();
+
+  ChatPage({super.key});
   @override
   Widget build(BuildContext context) {
     var email = ModalRoute.of(context)!.settings.arguments;

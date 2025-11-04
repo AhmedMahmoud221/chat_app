@@ -16,7 +16,7 @@ class CustomFormTextField extends StatelessWidget {
     return TextFormField(
       style: const TextStyle(color: Colors.white), // 👈 هنا يخلي النص الأبيض
 
-      obscureText: obscureText!,
+      obscureText: obscureText,
       validator: (data){
         if(data == null || data.isEmpty){
           return 'field is required';
