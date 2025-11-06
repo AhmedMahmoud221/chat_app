@@ -1,7 +1,8 @@
 import 'package:chat_app/constant.dart';
 import 'package:chat_app/helper/show_snack_bar.dart';
 import 'package:chat_app/pages/chat_page.dart';
-import 'package:chat_app/pages/cubits/login_cubit/login_cubit.dart';
+import 'package:chat_app/pages/cubits/auth_cubit/auth_cubit.dart';
+import 'package:chat_app/pages/cubits/chat_cubit/chat_cubit.dart';
 import 'package:chat_app/pages/register_page.dart';
 import 'package:chat_app/widgets/custom_button.dart';
 import 'package:chat_app/widgets/custom_text_field.dart';
@@ -15,22 +16,27 @@ class LoginPage extends StatelessWidget {
   bool isLoading = false;
   static String id = 'LoginPage';
 
-  GlobalKey<FormState> formKey = GlobalKey();
+  GlobalKey<FormState> formKey = GlobalKey(); 
 
   String? email, password;
+
+  LoginPage({super.key});
   @override
   Widget build(BuildContext context) {
-    return BlocListener<LoginCubit, LoginState>(
+    return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is LoginLoading) {
           isLoading = true ;
         } else if (state is LoginSuccess) {
-           Navigator.pushNamed(context, ChatPage.id);
+          BlocProvider.of<ChatCubit>(context).getMessages();
+          Navigator.pushNamed(context, ChatPage.id, arguments: email);
+          isLoading = false;
         } else if (state is LoginFailure) {
-          showSnackBar(context, 'something went wrong');
+          showSnackBar(context, state.errorMessage);
+          isLoading = false;
         }
       },
-      child: ModalProgressHUD(
+      builder:(context, state) => ModalProgressHUD(
         inAsyncCall: isLoading,
         child: Scaffold(
           backgroundColor: kPrimaryColor,
@@ -78,30 +84,7 @@ class LoginPage extends StatelessWidget {
                   CustomButton(
                     onTap: () async {
                       if (formKey.currentState!.validate()) {
-                        try {
-                          UserCredential userCredential = await loginUser();
-                          String? token = await userCredential.user
-                              ?.getIdToken();
-
-                          final prefs = await SharedPreferences.getInstance();
-                          await prefs.setString('token', token ?? '');
-                          await prefs.setString('email', email!);
-
-                          Navigator.pushReplacementNamed(
-                            context,
-                            ChatPage.id,
-                            arguments: email,
-                          );
-                        } on FirebaseAuthException catch (ex) {
-                          if (ex.code == 'user-not-found') {
-                            showSnackBar(context, 'User not found');
-                          } else if (ex.code == 'wrong-password') {
-                            showSnackBar(context, 'Wrong password');
-                          }
-                        } catch (ex) {
-                          print(ex);
-                          showSnackBar(context, 'There was an error');
-                        }
+                       BlocProvider.of<AuthCubit>(context).loginUser(email: email!, password: password!);
                       } else {}
                     },
                     text: 'Log In',
